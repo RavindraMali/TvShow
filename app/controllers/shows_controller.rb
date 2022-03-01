@@ -5,7 +5,7 @@ class ShowsController < ApplicationController
         # @shows = Show.all
         if params[:search]
             flash[:success] = "Search results"
-            @shows = Show.search(params[:search].strip).order("created_at DESC")
+            @shows = Show.search(params[:search].strip).order("created_at DESC").paginate(page: params[:page])
         else
             @shows = Show.all.order("created_at DESC").paginate(page: params[:page])
         end
