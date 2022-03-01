@@ -61,3 +61,6 @@ gem 'activeadmin'
 
 # bootstrap 
 gem 'bootstrap', '~> 5.1.3'
+
+# favoritor 
+gem 'acts_as_favoritor'

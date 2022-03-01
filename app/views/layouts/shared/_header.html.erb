@@ -12,18 +12,15 @@
         <li class="nav-item">
           <%= link_to "Shows", shows_path, class: "nav-link" %>
         </li>
-        
+        <% if user_signed_in? %>
         <li class="nav-item">
-          
-          <% if user_signed_in? %>
-       <%= link_to "logout", destroy_user_session_path, method: :delete, data: { turbo_method: :delete}, class: 'nav-link'  %>
-      <% end %>
+        <%= link_to "Favourites", favorites_path, class: 'nav-link'  %>
         </li>
+        <li class="nav-item">
+          <b><%= link_to "logout", destroy_user_session_path, method: :delete, data: { turbo_method: :delete}, class: 'nav-link'  %></b>
+        </li>
+        <% end %>
       </ul>
-      <form class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
     </div>
   </div>
 </nav>

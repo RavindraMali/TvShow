@@ -202,5 +202,47 @@ To check routes run command
 
 Rails routes | grep shows
 
+add to favorite functionality  using below gem 
+
+https://github.com/jonhue/acts_as_favoritor 
+
+add this gem in gemfile 
+# favoritor 
+gem 'acts_as_favoritor'
+
+run bundle install command
+
+-> Or install it yourself as: [option]
+
+$ gem install acts_as_favoritor
 
 
+If you always want to be up to date fetch the latest from GitHub in your Gemfile:
+
+gem 'acts_as_favoritor', github: 'jonhue/acts_as_favoritor'
+
+Now run the generator:
+
+$ rails g acts_as_favoritor
+
+To wrap things up, migrate the changes into your database:
+
+$ rails db:migrate
+
+Setup
+
+Add acts_as_favoritable to the models you want to be able to get favorited:
+
+class User < ActiveRecord::Base
+  acts_as_favoritable
+end
+
+class Show < ActiveRecord::Base
+  acts_as_favoritable
+end
+
+Specify which models can favorite other models by adding acts_as_favoritor:
+
+class User < ActiveRecord::Base
+  acts_as_favoritor
+end
