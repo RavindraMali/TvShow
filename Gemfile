@@ -64,3 +64,6 @@ gem 'bootstrap', '~> 5.1.3'
 
 # favoritor 
 gem 'acts_as_favoritor'
+
+# pagination
+gem 'will_paginate', '~> 3.3'

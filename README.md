@@ -246,3 +246,42 @@ Specify which models can favorite other models by adding acts_as_favoritor:
 class User < ActiveRecord::Base
   acts_as_favoritor
 end
+
+
+added will_paginate gem for pagination of records
+
+add gem in gemFile
+
+gem 'will_paginate', '~> 3.3'
+
+run bundle install command
+
+$ bundle install
+
+set per page value for specific model 
+example for Show model
+
+class Show
+  self.per_page = 5
+end
+
+set per_page globally
+
+  WillPaginate.per_page = 10
+
+Basic will_paginate use
+
+## perform a paginated query:
+@shows = Show.paginate(page: params[:page])
+
+# or, use an explicit "per page" limit:
+Shows.paginate(page: params[:page], per_page: 30)
+
+## render page links in the view:
+<%= will_paginate @posts %>
+
+# paginate in Active Record now returns a Relation
+Show.where(:name => "shark tank").paginate(:page => params[:page]).order('id DESC')
+
+# the new, shorter page() method
+Show.page(params[:page]).order('created_at DESC')
