@@ -13,11 +13,13 @@
                 <!--p class="card-text">Some quick example text to build on the card title and make up the bulk of the cards content.</p-->
                 
                 <%= link_to "View Details", show_path(show), class: "card-link" %>
+                <% if user_signed_in? %>
                 <% if current_user.favorited?(show) %>
                 <%= link_to "Remove from favourites", remove_from_favorites_show_path(show), method: :delete, data: { turbo_method: :delete}, class: "btn btn-danger m-2 text-black" %>
                 <% else %>
                 <%= form_tag(add_to_favorites_show_path(show), :method => "post") do %>
                     <button type="submit" class="btn btn-primary" >Mark As Favorite</button>
+                <% end %>
                 <% end %>
                 <% end %>
             </div>

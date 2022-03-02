@@ -19,6 +19,16 @@
         <li class="nav-item">
           <b><%= link_to "logout", destroy_user_session_path, method: :delete, data: { turbo_method: :delete}, class: 'nav-link'  %></b>
         </li>
+        <li class="nav-item">
+        <b><%= link_to "Profile", edit_user_registration_path, class: 'nav-link'  %></b>
+      </li>
+        <% else %>
+        <li class="nav-item">
+          <b><%= link_to "logIn", new_user_session_path, class: 'nav-link'  %></b>
+        </li>
+        <li class="nav-item">
+          <b><%= link_to "Register", new_user_registration_path, class: 'nav-link'  %></b>
+        </li>
         <% end %>
       </ul>
     </div>
