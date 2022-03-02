@@ -285,3 +285,26 @@ Show.where(:name => "shark tank").paginate(:page => params[:page]).order('id DES
 
 # the new, shorter page() method
 Show.page(params[:page]).order('created_at DESC')
+
+Sidekiq with Radis
+Radis
+https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-redis-on-ubuntu-20-04
+Command
+sudo apt update
+sudo apt install redis-server
+sudo systemctl restart redis.service
+	SideKiq
+https://github.com/mperham/sidekiq/wiki/Getting-Started
+Command/step
+gem 'sidekiq' #add gem
+rails generate sidekiq:job hard # create hard(job name) name
+bundle exec sidekiq
+HardJob.perform_in(5.minutes, 'bob', 5) # add  this line in controller
+Cron Job
+https://www.rubydoc.info/gems/sidekiq-cron/0.3.0
+https://medium.com/geekculture/how-to-create-scheduled-jobs-in-rails-using-sidekiq-cron-dc5dee27eae5
+		Note: Start both server(rails c and bundle exec sidekiq
+-	http://localhost:3000/sidekiq/cron (for sidekiq web ui)
+ - add two line in route file before Rails.application.routes.draw do class
+require 'sidekiq/web' & require 'sidekiq/cron/web'
+mount Sidekiq::Web => '/sidekiq' into route file

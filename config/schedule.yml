@@ -1,0 +1,3 @@
+ShowScheduleEmailJob:
+   cron: "1 * * * * *"
+   class: "ShowEmailJob"

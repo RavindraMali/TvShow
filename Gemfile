@@ -67,3 +67,9 @@ gem 'acts_as_favoritor'
 
 # pagination
 gem 'will_paginate', '~> 3.3'
+
+# sidekiq 
+gem 'sidekiq'
+
+# sidekiq-cron
+gem "sidekiq-cron", git: "https://github.com/citusdata/sidekiq-cron", branch: "hotfix/pipelining_depreciation"
