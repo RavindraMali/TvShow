@@ -1,8 +1,8 @@
 class ShowNotificationMailer < ApplicationMailer
 
-    def notification
-        @show = Show.find(params[:show_id])
-        @user = User.find(params[:user_id])
+    def notification(show, user)
+        @show = show
+        @user = user
         mail(to: @user.email, subject: 'Show reminder')
     end
 end

@@ -1,19 +1,23 @@
 <h1>TvShow</h1>
 <strong>Dear <%= @user.email %>, your favorite show will start soon</strong>
 
-here are details of your show
+<p>here are details of your show</p>
 
 <table>
     <tr>
+        <th>Channel Name</th>
+        <td><%= @show&.channel&.name %></td>
+    </tr>
+    <tr>
         <th>Show Name</th>
-        <td><%= @show.name %>/td>
+        <td><%= @show.name %></td>
     </tr>
     <tr>
         <th>Start Time</th>
-        <td><%= @show.start_time %></td>
+        <td><%= @show.start_time.strftime("%I:%M %p") %></td>
     </tr>
     <tr>
         <th>End Time</th>
-        <td><%= @show.end_time %></td>
+        <td><%= @show.end_time.strftime("%I:%M %p") %></td>
     </tr>
 </table>

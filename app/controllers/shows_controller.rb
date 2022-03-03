@@ -13,7 +13,8 @@ class ShowsController < ApplicationController
 
     def show
         @show = Show.find(params[:id])
-        ShowNotificationJob.perform_async(@show.name)
+        # ShowNotificationJob.perform_async(@show.name)
+        # ShowNotificationMailer.notification(@show, current_user).deliver_later
     end
 
     def add_to_favorites

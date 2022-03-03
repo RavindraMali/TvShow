@@ -1,0 +1,22 @@
+https://stackoverflow.com/questions/14958438/rails-activeadmin-undefined-method-per-for-activerecordrelation0x4d15ee
+while using will_paginate and active_admin often one error occures
+
+Rails: activeadmin, undefined method `per' for #<ActiveRecord::Relation:0x4d15ee0>
+
+create will_paginate.rb file into config/initilizers/
+
+content for will_paginate.rb
+
+if defined?(WillPaginate)
+  module WillPaginate
+    module ActiveRecord
+      module RelationMethods
+        def per(value = nil) per_page(value) end
+        def total_count() count end
+      end
+    end
+    module CollectionMethods
+      alias_method :num_pages, :total_pages
+    end
+  end
+end
