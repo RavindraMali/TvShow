@@ -73,3 +73,6 @@ gem 'sidekiq'
 
 # sidekiq-cron
 gem "sidekiq-cron", git: "https://github.com/citusdata/sidekiq-cron", branch: "hotfix/pipelining_depreciation"
+
+# sidekiq-batch
+gem 'sidekiq-batch'

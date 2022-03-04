@@ -331,3 +331,25 @@ into the routes.rb file inclue below code in  do ...end  block
 
 
 mount Sidekiq::Web => '/sidekiq'  
+__________________________________________________________________________
+sidekiq-batch
+
+Sidekiq-batch gem implementation
+
+add gem into gem file of yuor application
+
+gem 'sidekiq-batch'
+
+always run bundle install command whenever you add gem to your GemFile.
+
+bundle install
+
+It'll install required dependencies
+
+create new job using sidekiq:job generator.
+
+run the below line on root your your application console.
+
+	$ rails generate sidekiq:job  CustomeJob
+	
+this will create your job class
