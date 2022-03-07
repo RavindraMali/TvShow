@@ -1,9 +1,10 @@
 class EmailJob
   include Sidekiq::Job
 
-  def perform(*args)
-    puts "EmailJob creating"
+  def perform(id)
+    
+    puts "EmailJob creating #{id}" 
     sleep 5
-    puts "EmailJob created"
+    puts "EmailJob created #{id}"
   end
 end

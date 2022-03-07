@@ -332,24 +332,179 @@ into the routes.rb file inclue below code in  do ...end  block
 
 mount Sidekiq::Web => '/sidekiq'  
 __________________________________________________________________________
-sidekiq-batch
 
-Sidekiq-batch gem implementation
 
-add gem into gem file of yuor application
+SideKiq-batch
+https://github.com/breamware/sidekiq-batch
+
+Add this line to your application's Gemfile:
 
 gem 'sidekiq-batch'
 
-always run bundle install command whenever you add gem to your GemFile.
+And then execute:
 
-bundle install
+$ bundle
 
-It'll install required dependencies
+Or install it yourself as:
 
-create new job using sidekiq:job generator.
+$ gem install sidekiq-batch
+
+
+Ensure that you have schedule.yml file into your config/ directory 
+
+If you already have implemented sidekiq or sidekiq-cron gem than this file will be exists into your config/ directory
+
+Or else, you can create it your own
+—---------------------------------------------------------------------------------------------
+The following content should be there in the file
+
+ShowScheduleEmailJob:                      # job 
+   cron: "1 * * * * *"                                 # iteration of job  (every minute)
+   class: "ShowEmailJob"                     # job to be perform every minute
+—------------------------------------------------------------------------------------------------
+
+Your routes.rb should content below code
+# at the top of the page
+require 'sidekiq/web'
+require 'sidekiq/cron/web'
+
+Rails.application.routes.draw do
+	# routess
+mount Sidekiq::Web => '/sidekiq'
+	# rotues
+End
+
+
+Check the below file into your application 
+config/initializers/sidekiq.rb
+
+schedule_file = "config/schedule.yml"
+if File.exist?(schedule_file) && Sidekiq.server?
+   Sidekiq::Cron::Job.load_from_hash YAML.load_file(schedule_file)
+end
+
+Sidekiq.strict_args!(false)
+
+
+To perform the job chunk we will create EmailJob job
+
+
+Create job using rails sidekiq
+$ rails generate sidekiq:job EmailJob
+
+class EmailJob
+  include Sidekiq::Job           # include sidekiq job if any already
+
+  def perform(*args)
+    puts "EmailJob creating"          # print some message on rails sidekiq console
+    sleep 3                                      # make silent the job to observe job processing 
+    puts "EmailJob created"           
+  end
+end
+
+
 
 run the below line on root your your application console.
 
 	$ rails generate sidekiq:job  CustomeJob
-	
+
 this will create your job class
+
+app/sidekiq/custome_job.rb
+
+class CustomeJob
+  
+  def perform(*args)
+      batch = Sidekiq::Batch.new			# create new batch
+      batch.description = "Batch Description of Customer Job"       # add description for that batch
+      batch.on(:success, CustomeJob::Created,{ "custome_id" => 101})  # callback for job suceed
+      batch.jobs do                              # iterate batch.jobs 
+        5.times { EmailJob.perform_async }            # will create 5 chunks of job EmailJob 
+      # EmailJob.perform_async the perform_async is class method to call perform method of                    # Email Job  	
+       end
+  end           # perform end
+
+  class Created                    # created local class for succeed callback
+    def on_success(status, options)
+        puts "::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+        puts status
+        puts "\tcustome job completed"
+    end
+  end 	   # Created End
+end         # CustomeJob End         
+
+
+
+
+
+Execute the batch 
+
+While working sidekiq , sidekiq-cron and sidekiq-batch below servers boot simultaneously 
+
+$ rails console
+
+$ bundle exec sidekiq            or                sidekiq
+
+And if your application chunking job of web than 
+$ rails server
+
+
+On  $ rails console 
+3.0.0 :002 > CustomeJob.new.perform # call the perform method of CustomeJob
+
+CustomeJob is job class
+
+.new will create new instance of CustomeJob class
+
+.perform will call the perform method
+
+
+Then check the $ bundle exec sidekiq console 
+022-03-07T07:59:19.956Z pid=1369617 tid=t365 class=EmailJob jid=ccd2c05da5f08a1302665f0d bid=pza8h2KmvtHT3g INFO: start
+2022-03-07T07:59:19.956Z pid=1369617 tid=t36p class=EmailJob jid=d57aa2506a62d65fcc32f582 bid=pza8h2KmvtHT3g INFO: start
+2022-03-07T07:59:19.956Z pid=1369617 tid=t385 class=EmailJob jid=867f37b1a06d186a0593c7a5 bid=pza8h2KmvtHT3g INFO: start
+EmailJob creating 0
+EmailJob creating 3
+EmailJob creating 2
+EmailJob creating 1
+EmailJob creating 4
+EmailJob created 0
+(called from /home/pcs200/.rvm/gems/ruby-3.0.0/gems/sidekiq-batch-0.1.6/lib/sidekiq/batch.rb:182:in `block in process_successful_job'}
+2022-03-07T07:59:24.966Z pid=1369617 tid=t329 class=EmailJob jid=bcf503cde7f6660f7db695ab bid=pza8h2KmvtHT3g elapsed=5.014 INFO: done
+EmailJob created 3
+EmailJob created 2
+(called from /home/pcs200/.rvm/gems/ruby-3.0.0/gems/sidekiq-batch-0.1.6/lib/sidekiq/batch.rb:182:in `block in process_successful_job'}
+2022-03-07T07:59:24.967Z pid=1369617 tid=t365 class=EmailJob jid=ccd2c05da5f08a1302665f0d bid=pza8h2KmvtHT3g elapsed=5.012 INFO: done
+EmailJob created 1
+Pipelining commands on a Redis instance is deprecated and will be removed in Redis 5.0.0.
+
+(called from /home/pcs200/.rvm/gems/ruby-3.0.0/gems/sidekiq-batch-0.1.6/lib/sidekiq/batch.rb:182:in `block in process_successful_job'}
+2022-03-07T07:59:24.968Z pid=1369617 tid=t36h class=EmailJob jid=47a12e78e2ad2c9cb779125e bid=pza8h2KmvtHT3g elapsed=5.013 INFO: done
+EmailJob created 4
+(called from /home/pcs200/.rvm/gems/ruby-3.0.0/gems/sidekiq-batch-0.1.6/lib/sidekiq/batch.rb:182:in `block in process_successful_job'}
+
+(called from /home/pcs200/.rvm/gems/ruby-3.0.0/gems/sidekiq-batch-0.1.6/lib/sidekiq/batch.rb:182:in `block in process_successful_job'}
+Pipelining commands on a Redis instance is deprecated and will be removed in Redis 5.0.0.
+
+(called from /home/pcs200/.rvm/gems/ruby-3.0.0/gems/sidekiq-batch-0.1.6/lib/sidekiq/batch.rb:207:in `block in enqueue_callbacks'}
+(called from /home/pcs200/.rvm/gems/ruby-3.0.0/gems/sidekiq-batch-0.1.6/lib/sidekiq/batch/callback.rb:64:in `block in complete'}
+(called from /home/pcs200/.rvm/gems/ruby-3.0.0/gems/sidekiq-batch-0.1.6/lib/sidekiq/batch.rb:207:in `block in enqueue_callbacks'}
+(called from /home/pcs200/.rvm/gems/ruby-3.0.0/gems/sidekiq-batch-0.1.6/lib/sidekiq/batch.rb:141:in `block in persist_bid_attr'}
+(called from /home/pcs200/.rvm/gems/ruby-3.0.0/gems/sidekiq-batch-0.1.6/lib/sidekiq/batch.rb:45:in `block in on'}
+(called from /home/pcs200/.rvm/gems/ruby-3.0.0/gems/sidekiq-batch-0.1.6/lib/sidekiq/batch.rb:65:in `block in jobs'}
+(called from /home/pcs200/.rvm/gems/ruby-3.0.0/gems/sidekiq-batch-0.1.6/lib/sidekiq/batch.rb:88:in `block in jobs'}
+2022-03-07T07:59:24.975Z pid=1369617 tid=t385 class=EmailJob jid=867f37b1a06d186a0593c7a5 bid=pza8h2KmvtHT3g elapsed=5.019 INFO: done
+2022-03-07T07:59:24.970Z pid=1369617 tid=t36p class=EmailJob jid=d57aa2506a62d65fcc32f582 bid=pza8h2KmvtHT3g elapsed=5.014 INFO: done
+2022-03-07T07:59:24.976Z pid=1369617 tid=t399 class=Sidekiq::Batch::Callback::Worker jid=3193561a32cecdcc558d4f10 bid=zmJhHWXTfbUAmA INFO: start
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#<Sidekiq::Batch::Status:0x00007fdde402abb0>
+{"custome_id"=>101}
+	custome job completed
+
+
+
+
+We can see EmailJob is creating 1 completed after EmailJob Created 4
+
+
+	
